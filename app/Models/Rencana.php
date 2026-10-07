@@ -26,4 +26,22 @@ class Rencana extends Model
         'lampiran_fed',
         'status_fed'
     ];
+
+    public function assessments()
+    {
+        return $this->hasMany(
+            Assessment::class,
+            'rencana_id',
+            'id_rencana'
+        );
+    }
+
+    public function followUps()
+    {
+        return $this->hasMany(
+            FollowUp::class,
+            'rencana_id',
+            'id_rencana'
+        );
+    } 
 }

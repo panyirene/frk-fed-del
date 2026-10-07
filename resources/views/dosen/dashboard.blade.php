@@ -3,165 +3,751 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Dosen - Manajemen Kinerja Tridharma</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 min-h-screen p-6">
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <!-- Header Portal Dosen -->
-        <div class="bg-blue-600 text-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
-            <div>
-                <span class="text-xs font-semibold px-2.5 py-1 bg-white/25 rounded-full">Portal Dosen / Pelaksana</span>
-                <h1 class="text-2xl font-bold mt-1">Selamat Datang, {{ auth()->user()->name }}</h1>
-                <p class="text-sm text-blue-100">Kelola Form Rencana Kerja (FRK) dan Evaluasi Diri (FED) kinerja Tridharma Anda semester ini.</p>
-            </div>
-            <form action="/logout" method="POST">
-                @csrf
-                <button type="submit" class="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-2.5 rounded-xl transition">Keluar</button>
-            </form>
-        </div>
 
+    <title>Dashboard Dosen - FRK & FED</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<div class="min-h-screen">
+
+    {{-- =========================================================
+         HEADER
+    ========================================================== --}}
+    <header class="bg-blue-700 text-white shadow">
+        <div class="max-w-7xl mx-auto px-6 py-5">
+
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+                <div>
+                    <h1 class="text-2xl font-bold">
+                        Portal Dosen
+                    </h1>
+
+                    <p class="text-blue-100 text-sm mt-1">
+                        Pengelolaan FRK & FED
+                    </p>
+                </div>
+
+                <div class="text-sm">
+                    <div class="font-semibold">
+                        {{ auth()->user()->name }}
+                    </div>
+
+                    <div class="text-blue-100">
+                        {{ auth()->user()->email }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    {{-- =========================================================
+         MAIN CONTENT
+    ========================================================== --}}
+    <main class="max-w-7xl mx-auto px-6 py-8">
+
+        {{-- SUCCESS --}}
         @if(session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm shadow-sm">
+            <div class="mb-6 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-green-700">
                 {{ session('success') }}
             </div>
         @endif
 
+        {{-- ERROR --}}
         @if(session('error'))
-            <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-sm shadow-sm">
+            <div class="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-red-700">
                 {{ session('error') }}
             </div>
         @endif
 
-        <!-- Statistik SKS Dosen -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Target SKS Anda (FRK)</p>
-                <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $totalTargetSks ?? 0 }} <span class="text-sm font-normal text-slate-500">SKS</span></h3>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                <p class="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Total Realisasi SKS Anda (FED)</p>
-                <h3 class="text-3xl font-bold text-emerald-600 mt-1">{{ $totalRealisasiSks ?? 0 }} <span class="text-sm font-normal text-slate-500">SKS</span></h3>
-            </div>
-        </div>
 
-        <!-- Aksi & Tombol Cetak / Tambah -->
-        <div class="flex justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+        {{-- =====================================================
+             PAGE TITLE + ACTION
+        ====================================================== --}}
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
             <div>
-                <h2 class="text-lg font-bold text-slate-800">Daftar Kegiatan Tridharma Anda</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Semester Genap 2025/2026</p>
+                <h2 class="text-xl font-bold text-gray-800">
+                    Dashboard
+                </h2>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Pantau rencana kerja, evaluasi diri, dan tindak lanjut Anda.
+                </p>
             </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition shadow-sm flex items-center space-x-1.5">
-                    <span>🖨️</span> <span>Cetak / PDF</span>
-                </button>
-                <a href="/rencana/create" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition shadow-sm">
+
+            <div class="flex flex-wrap gap-3">
+
+                {{-- KELOLA FRK --}}
+                <a
+                    href="{{ url('/rencana') }}"
+                    class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-medium"
+                >
+                    Kelola FRK
+                </a>
+
+                {{-- TINDAK LANJUT --}}
+                <a
+                    href="{{ route('tindak-lanjut.index') }}"
+                    class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 text-sm font-medium"
+                >
+                    Tindak Lanjut
+                </a>
+
+                {{-- TAMBAH RENCANA --}}
+                <a
+                    href="{{ url('/rencana/create') }}"
+                    class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium"
+                >
                     + Tambah Rencana Kerja
                 </a>
+
             </div>
+
         </div>
 
-        <!-- Tabel Daftar Kegiatan -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto p-6">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        <th class="p-3">#</th>
-                        <th class="p-3">Bidang & Nama Kegiatan</th>
-                        <th class="p-3">Beban SKS</th>
-                        <th class="p-3">Bukti Fisik (FED)</th>
-                        <th class="p-3">Status & Catatan Asesor</th>
-                        <th class="p-3 text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                    @forelse($rencanaList as $index => $item)
+
+        {{-- =====================================================
+             STAT CARDS
+        ====================================================== --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+            {{-- TOTAL KEGIATAN --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+
+                <p class="text-sm text-gray-500">
+                    Total Kegiatan
+                </p>
+
+                <p class="text-3xl font-bold text-gray-800 mt-2">
+                    {{ $rencanaList->count() }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-2">
+                    Seluruh rencana kerja
+                </p>
+
+            </div>
+
+
+            {{-- FRK DISETUJUI --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+
+                <p class="text-sm text-gray-500">
+                    FRK Disetujui
+                </p>
+
+                <p class="text-3xl font-bold text-green-600 mt-2">
+                    {{ $rencanaList->where('status_frk', 'approved')->count() }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-2">
+                    Rencana kerja telah disetujui
+                </p>
+
+            </div>
+
+
+            {{-- FED TERISI --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+
+                <p class="text-sm text-gray-500">
+                    FED Terisi
+                </p>
+
+                <p class="text-3xl font-bold text-blue-600 mt-2">
+                    {{ $rencanaList->whereNotNull('sks_realisasi')->count() }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-2">
+                    Kegiatan sudah memiliki realisasi
+                </p>
+
+            </div>
+
+
+            {{-- TINDAK LANJUT --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+
+                <p class="text-sm text-gray-500">
+                    Tindak Lanjut
+                </p>
+
+                <p class="text-3xl font-bold text-orange-500 mt-2">
+                    {{ $stats['followup'] ?? 0 }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-2">
+                    Perlu ditindaklanjuti
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             WORKFLOW
+        ====================================================== --}}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
+
+            <div class="mb-5">
+
+                <h3 class="text-lg font-bold text-gray-800">
+                    Alur Pengelolaan Kinerja
+                </h3>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Pantau tahapan pengajuan dan penyelesaian kegiatan.
+                </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                {{-- STEP 1 --}}
+                <a
+                    href="{{ url('/rencana') }}"
+                    class="border rounded-xl p-5 hover:border-blue-400 hover:bg-blue-50 transition"
+                >
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                            1
+                        </div>
+
+                        <span class="text-xs text-blue-600 font-medium">
+                            FRK
+                        </span>
+
+                    </div>
+
+                    <h4 class="font-semibold mt-4">
+                        Rencana Kerja
+                    </h4>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Susun dan ajukan rencana kegiatan.
+                    </p>
+
+                </a>
+
+
+                {{-- STEP 2 --}}
+                <a
+                    href="{{ url('/rencana') }}"
+                    class="border rounded-xl p-5 hover:border-green-400 hover:bg-green-50 transition"
+                >
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">
+                            2
+                        </div>
+
+                        <span class="text-xs text-green-600 font-medium">
+                            FED
+                        </span>
+
+                    </div>
+
+                    <h4 class="font-semibold mt-4">
+                        Evaluasi Diri
+                    </h4>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Isi realisasi dan bukti kegiatan.
+                    </p>
+
+                </a>
+
+
+                {{-- STEP 3 --}}
+                <div class="border rounded-xl p-5">
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                            3
+                        </div>
+
+                        <span class="text-xs text-purple-600 font-medium">
+                            REVIEW
+                        </span>
+
+                    </div>
+
+                    <h4 class="font-semibold mt-4">
+                        Assessment
+                    </h4>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Menunggu proses review asesor.
+                    </p>
+
+                </div>
+
+
+                {{-- STEP 4 --}}
+                <a
+                    href="{{ route('tindak-lanjut.index') }}"
+                    class="border rounded-xl p-5 hover:border-orange-400 hover:bg-orange-50 transition"
+                >
+
+                    <div class="flex items-center justify-between">
+
+                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+                            4
+                        </div>
+
+                        <span class="text-xs text-orange-600 font-medium">
+                            FOLLOW UP
+                        </span>
+
+                    </div>
+
+                    <h4 class="font-semibold mt-4">
+                        Tindak Lanjut
+                    </h4>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Perbaiki temuan dan kirim bukti.
+                    </p>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             HITUNG PROGRESS
+        ====================================================== --}}
+        @php
+
+            $totalKegiatan = $rencanaList->count();
+
+            $frkApproved = $rencanaList
+                ->where('status_frk', 'approved')
+                ->count();
+
+            $fedCompleted = $rencanaList
+                ->whereNotNull('sks_realisasi')
+                ->count();
+
+            $followUpActive = $stats['followup'] ?? 0;
+
+            $frkProgress = $totalKegiatan > 0
+                ? round(($frkApproved / $totalKegiatan) * 100)
+                : 0;
+
+            $fedProgress = $totalKegiatan > 0
+                ? round(($fedCompleted / $totalKegiatan) * 100)
+                : 0;
+
+        @endphp
+
+
+        {{-- =====================================================
+             PROGRESS
+        ====================================================== --}}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
+
+            <h3 class="text-lg font-bold text-gray-800">
+                Progress
+            </h3>
+
+            <div class="space-y-6 mt-6">
+
+                {{-- FRK --}}
+                <div>
+
+                    <div class="flex justify-between text-sm mb-2">
+
+                        <span class="font-medium">
+                            FRK Disetujui
+                        </span>
+
+                        <span class="text-gray-500">
+                            {{ $frkApproved }} / {{ $totalKegiatan }}
+                        </span>
+
+                    </div>
+
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+
+                        <div
+                            class="bg-blue-600 h-2.5 rounded-full"
+                            style="width: {{ $frkProgress }}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- FED --}}
+                <div>
+
+                    <div class="flex justify-between text-sm mb-2">
+
+                        <span class="font-medium">
+                            FED Terisi
+                        </span>
+
+                        <span class="text-gray-500">
+                            {{ $fedCompleted }} / {{ $totalKegiatan }}
+                        </span>
+
+                    </div>
+
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+
+                        <div
+                            class="bg-green-500 h-2.5 rounded-full"
+                            style="width: {{ $fedProgress }}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- TINDAK LANJUT --}}
+                <div>
+
+                    <div class="flex justify-between text-sm mb-2">
+
+                        <span class="font-medium">
+                            Tindak Lanjut Aktif
+                        </span>
+
+                        <span class="text-gray-500">
+                            {{ $followUpActive }}
+                        </span>
+
+                    </div>
+
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+
+                        <div
+                            class="{{ $followUpActive > 0 ? 'bg-orange-500' : 'bg-green-500' }} h-2.5 rounded-full"
+                            style="width: 100%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             SUMMARY SKS
+        ====================================================== --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+            {{-- TARGET --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+
+                <p class="text-sm text-gray-500">
+                    Total Target SKS
+                </p>
+
+                <p class="text-3xl font-bold text-blue-700 mt-2">
+                    {{ $totalTargetSks }}
+                </p>
+
+            </div>
+
+
+            {{-- REALISASI --}}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+
+                <p class="text-sm text-gray-500">
+                    Total Realisasi SKS
+                </p>
+
+                <p class="text-3xl font-bold text-green-600 mt-2">
+                    {{ $totalRealisasiSks }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             DAFTAR RENCANA KERJA
+        ====================================================== --}}
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+
+            <div class="px-6 py-5 border-b border-gray-200">
+
+                <h3 class="text-lg font-bold text-gray-800">
+                    Daftar Rencana Kerja
+                </h3>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    Daftar kegiatan yang Anda kelola.
+                </p>
+
+            </div>
+
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-sm">
+
+                    <thead class="bg-gray-50">
+
                         <tr>
-                            <td class="p-3 align-top font-medium">{{ $index + 1 }}</td>
-                            <td class="p-3 align-top">
-                                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">{{ $item->jenis_rencana }} - {{ $item->sub_rencana }}</span>
-                                <div class="font-semibold text-slate-900 mt-1">{{ $item->nama_kegiatan }}</div>
-                            </td>
-                            <td class="p-3 align-top">
-                                <div class="font-medium text-slate-900">Target: {{ $item->sks_terhitung }} SKS</div>
-                                @if($item->sks_realisasi !== null)
-                                    <div class="text-xs text-emerald-600 font-medium mt-0.5">Realisasi: {{ $item->sks_realisasi }} SKS</div>
-                                @endif
-                            </td>
-                            <td class="p-3 align-top">
-                                @if($item->lampiran_fed)
-                                    <a href="{{ $item->lampiran_fed }}" target="_blank" class="text-blue-600 hover:text-blue-800 underline text-xs font-medium bg-blue-50 px-2.5 py-1 rounded-lg inline-block">Lihat Dokumen</a>
-                                @else
-                                    <span class="text-xs text-slate-400 italic">Belum diunggah</span>
-                                @endif
-                            </td>
-                            <td class="p-3 align-top space-y-1">
-                                <span class="text-xs font-semibold px-2.5 py-1 rounded-full inline-block
-                                    {{ $item->status_frk == 'approved' ? 'bg-emerald-50 text-emerald-600' : ($item->status_frk == 'rejected' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600') }}">
-                                    FRK: {{ ucfirst($item->status_frk) }}
-                                </span>
-                                @if($item->komentar_asesor)
-                                    <div class="text-xs text-rose-600 bg-rose-50 p-2 rounded-xl border border-rose-100 mt-1">
-                                        <span class="font-bold">Catatan Revisi:</span> {{ $item->komentar_asesor }}
+
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">
+                                No
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">
+                                Kegiatan
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">
+                                Kategori
+                            </th>
+
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">
+                                Target
+                            </th>
+
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">
+                                Realisasi
+                            </th>
+
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">
+                                FRK
+                            </th>
+
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">
+                                FED
+                            </th>
+
+                            <th class="px-6 py-4 text-center font-semibold text-gray-600">
+                                Aksi
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        @forelse($rencanaList as $index => $rencana)
+
+                            <tr class="hover:bg-gray-50">
+
+                                {{-- NO --}}
+                                <td class="px-6 py-4 text-gray-500">
+                                    {{ $index + 1 }}
+                                </td>
+
+
+                                {{-- KEGIATAN --}}
+                                <td class="px-6 py-4">
+
+                                    <div class="font-medium text-gray-800">
+                                        {{ $rencana->nama_kegiatan }}
                                     </div>
-                                @endif
-                            </td>
-                            <!-- Kolom Aksi dengan Tombol Titik Tiga -->
-                            <td class="p-3 align-top text-right relative overflow-visible">
-                                <button onclick="toggleDropdown(event, {{ $item->id_rencana }})" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition focus:outline-none">
-                                    <svg class="w-5 h-5 inline pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                    </svg>
-                                </button>
 
-                                <!-- Menu Dropdown -->
-                                <div id="dropdown-{{ $item->id_rencana }}" class="hidden absolute right-6 top-12 w-44 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-50 text-left">
-                                    <a href="/rencana/{{ $item->id_rencana }}/edit" class="block px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition">
-                                        📝 Edit FRK
-                                    </a>
-                                    <a href="/rencana/{{ $item->id_rencana }}/fed" class="block px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition">
-                                        ✏️ Edit FED & Bukti
-                                    </a>
-                                    <form action="/rencana/{{ $item->id_rencana }}/delete" method="POST" onsubmit="return confirm('Hapus rencana kegiatan ini?')">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition">
-                                            🗑️ Hapus Kegiatan
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="p-10 text-center text-slate-400 italic">
-                                Belum ada rencana kegiatan yang dibuat. Silakan klik tombol "+ Tambah Rencana Kerja".
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                    @if($rencana->sub_rencana)
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            {{ $rencana->sub_rencana }}
+                                        </div>
+                                    @endif
+
+                                </td>
+
+
+                                {{-- KATEGORI --}}
+                                <td class="px-6 py-4">
+
+                                    <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 text-xs">
+                                        {{ $rencana->jenis_rencana }}
+                                    </span>
+
+                                </td>
+
+
+                                {{-- TARGET --}}
+                                <td class="px-6 py-4 text-center">
+                                    {{ $rencana->sks_terhitung }}
+                                </td>
+
+
+                                {{-- REALISASI --}}
+                                <td class="px-6 py-4 text-center">
+                                    {{ $rencana->sks_realisasi ?? '-' }}
+                                </td>
+
+
+                                {{-- STATUS FRK --}}
+                                <td class="px-6 py-4 text-center">
+
+                                    @if($rencana->status_frk === 'approved')
+
+                                        <span class="px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                                            Disetujui
+                                        </span>
+
+                                    @elseif($rencana->status_frk === 'rejected')
+
+                                        <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-medium">
+                                            Revisi
+                                        </span>
+
+                                    @else
+
+                                        <span class="px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-medium">
+                                            Pending
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- STATUS FED --}}
+                                <td class="px-6 py-4 text-center">
+
+                                    @if($rencana->sks_realisasi !== null)
+
+                                        <span class="px-2.5 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                                            Terisi
+                                        </span>
+
+                                    @else
+
+                                        <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+                                            Belum
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- AKSI --}}
+                                <td class="px-6 py-4 text-center">
+
+                                    <div class="relative inline-block text-left">
+
+                                        <details>
+
+                                            <summary class="cursor-pointer list-none px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-sm">
+                                                Aksi
+                                            </summary>
+
+                                            <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+
+                                                {{-- EDIT FRK --}}
+                                                <a
+                                                    href="{{ url('/rencana/' . $rencana->id_rencana . '/edit') }}"
+                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                                >
+                                                    Edit FRK
+                                                </a>
+
+
+                                                {{-- EDIT FED --}}
+                                                <a
+                                                    href="{{ url('/rencana/' . $rencana->id_rencana . '/fed') }}"
+                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                                >
+                                                    Edit FED
+                                                </a>
+
+
+                                                {{-- HAPUS --}}
+                                                <form
+                                                    action="{{ url('/rencana/' . $rencana->id_rencana) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Yakin ingin menghapus rencana kerja ini?')"
+                                                >
+
+                                                    @csrf
+
+                                                    @method('DELETE')
+
+                                                    <button
+                                                        type="submit"
+                                                        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                                    >
+                                                        Hapus
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </details>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td
+                                    colspan="8"
+                                    class="px-6 py-12 text-center text-gray-500"
+                                >
+
+                                    <div class="text-lg font-medium">
+                                        Belum ada rencana kerja.
+                                    </div>
+
+                                    <p class="text-sm mt-1">
+                                        Silakan tambahkan rencana kerja terlebih dahulu.
+                                    </p>
+
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
-    </div>
 
-    <!-- Script Dropdown Titik Tiga -->
-    <script>
-        function toggleDropdown(event, id) {
-            event.stopPropagation();
-            document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
-                if (el.id !== 'dropdown-' + id) {
-                    el.classList.add('hidden');
-                }
-            });
-            const dropdown = document.getElementById('dropdown-' + id);
-            dropdown.classList.toggle('hidden');
-        }
+    </main>
 
-        window.addEventListener('click', function(e) {
-            document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
-                el.classList.add('hidden');
-            });
-        });
-    </script>
+</div>
+
 </body>
 </html>
